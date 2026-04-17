@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { Category } from '../../../types';
 import { styles } from '../CategoryList.styles';
 import { useLanguage } from '../../../context/LanguageContext';
+import { useNavigation } from '@react-navigation/native';
 
 const IMAGE_MAP: { [key: string]: any } = {
   'vehicles': require('../../../assets/images/categories/vehicles.png'),
@@ -26,10 +27,19 @@ type CategoryItemProps = {
 
 const CategoryItem = ({ item }: CategoryItemProps) => {
   const { language } = useLanguage();
+  const navigation = useNavigation<any>();
   const displayName = language === 'ar' ? item.name_l1 : item.name;
 
+  const handlePress = () => {
+    if (item.children && item.children.length > 0) {
+      navigation.navigate('SubCategory', { category: item });
+    } else {
+      navigation.navigate('AdList', { category: item });
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.categoryItem}>
+    <TouchableOpacity style={styles.categoryItem} onPress={handlePress}>
       <View style={styles.iconContainer}>
         {IMAGE_MAP[item.slug] ? (
           <Image

@@ -14,14 +14,16 @@ type ListItemAdCardProps = {
 const ListItemAdCard = ({ ad }: ListItemAdCardProps) => {
   const { t, language } = useLanguage();
 
-  // Extract attributes from formattedExtraFields
   const getFormattedAttr = (attr: string) =>
     ad.formattedExtraFields?.find((f) => f.attribute === attr)?.formattedValue;
 
   const price = getFormattedAttr('price');
 
-  // Thumbnail URL
-  const imageUrl = `https://images.olx.com.lb/thumbnails/${ad.id}-800x600.webp`;
+  const imageUrl = `https://images.olx.com.lb/thumbnails/${ad.coverPhoto.id}-400x300.webp`;
+
+  const displayTitle = language === 'ar' ? ad.title_l1 : ad.title;
+  const locationLvl2 = language === 'ar' ? ad.location?.lvl2?.name_l1 : ad.location?.lvl2?.name;
+  const locationLvl1 = language === 'ar' ? ad.location?.lvl1?.name_l1 : ad.location?.lvl1?.name;
 
   return (
     <TouchableOpacity style={[styles.card, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
@@ -38,12 +40,12 @@ const ListItemAdCard = ({ ad }: ListItemAdCardProps) => {
         </View>
         
         <Text style={[styles.title, { textAlign: language === 'ar' ? 'right' : 'left' }]} numberOfLines={2}>
-          {ad.title}
+          {displayTitle}
         </Text>
 
         <View style={[styles.bottomRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           <Text style={styles.location} numberOfLines={1}>
-            {ad.location?.lvl2?.name || ad.location?.lvl1?.name}, {ad.location?.lvl1?.name}
+            {locationLvl2 || locationLvl1}, {locationLvl1}
           </Text>
           <Text style={styles.time}>
             {getRelativeTime(ad.createdAt, language)}

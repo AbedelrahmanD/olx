@@ -19,11 +19,13 @@ export type AdPhoto = {
 export type FormattedExtraField = {
   attribute: string;
   formattedValue: any;
+  formattedValue_l1?: any;
 };
 
 export type Ad = {
   id: number;
   title: string;
+  title_l1: string;
   createdAt: number;
   photos: AdPhoto[];
   coverPhoto: AdPhoto;

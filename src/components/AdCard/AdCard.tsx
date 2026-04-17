@@ -26,6 +26,10 @@ const AdCard = ({ ad }: AdCardProps) => {
 
   const imageUrl = `https://images.olx.com.lb/thumbnails/${ad.coverPhoto.id}-400x300.webp`;
 
+  const displayTitle = language === 'ar' ? ad.title_l1 : ad.title;
+  const locationLvl2 = language === 'ar' ? ad.location?.lvl2?.name_l1 : ad.location?.lvl2?.name;
+  const locationLvl1 = language === 'ar' ? ad.location?.lvl1?.name_l1 : ad.location?.lvl1?.name;
+
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.9}>
       <View style={{ backgroundColor: Colors.gray, height: 120 }}>
@@ -44,7 +48,7 @@ const AdCard = ({ ad }: AdCardProps) => {
         </View>
 
         <Text style={[styles.title, { textAlign: language === 'ar' ? 'right' : 'left' }]} numberOfLines={2}>
-          {ad.title}
+          {displayTitle}
         </Text>
 
         <View style={[styles.paramsRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
@@ -81,7 +85,7 @@ const AdCard = ({ ad }: AdCardProps) => {
         </View>
 
         <Text style={[styles.location, { textAlign: language === 'ar' ? 'right' : 'left' }]} numberOfLines={1}>
-          {ad.location?.lvl2?.name || ad.location?.lvl1?.name}, {ad.location?.lvl1?.name}
+          {locationLvl2 || locationLvl1}, {locationLvl1}
         </Text>
 
         <Text style={[styles.time, { textAlign: language === 'ar' ? 'right' : 'left' }]}>

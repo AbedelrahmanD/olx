@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator, BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../theme/Colors';
 import { styles } from './TabNavigator.styles';
@@ -10,11 +11,24 @@ import SellScreen from '../screens/SellScreen';
 import ChatScreen from '../screens/ChatScreen';
 import AccountScreen from '../screens/AccountScreen';
 import MyAdsScreen from '../screens/MyAdsScreen';
-import { useLanguage } from '../context/LanguageContext';
+import SubCategoryScreen from '../screens/SubCategoryScreen/SubCategoryScreen';
+import AdListScreen from '../screens/AdListScreen/AdListScreen';
 
+import { useLanguage } from '../context/LanguageContext';
 import { useNavigationState } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='HomeMain' component={HomeScreen} />
+      <Stack.Screen name='SubCategory' component={SubCategoryScreen} />
+      <Stack.Screen name='AdList' component={AdListScreen} />
+    </Stack.Navigator>
+  );
+};
 
 type TabButtonProps = BottomTabBarButtonProps & {
   label: string;
@@ -25,7 +39,7 @@ type TabButtonProps = BottomTabBarButtonProps & {
 
 const TabButton = (props: TabButtonProps) => {
   const { label, icon, activeIcon, onPress, routeName } = props;
-  
+
   const focused = useNavigationState((state) => {
     const route = state?.routes[state.index];
     return route?.name === routeName;
@@ -77,7 +91,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen
         name={'HOME'}
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           tabBarButton: (props) => (
             <TabButton

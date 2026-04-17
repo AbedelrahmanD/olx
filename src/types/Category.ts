@@ -4,5 +4,7 @@ export type Category = {
   name_l1: string;
   externalID: string;
   slug: string;
-  children: Category[];
+  level: number;
+  parentID: number | null;
+  children?: Category[];
 };
