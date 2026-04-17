@@ -13,9 +13,14 @@ export const CategoryService = {
     return await response.json();
   },
 
-  getCategoryFields: async (categoryID: string) => {
+  getCategoryFields: async (categorySlug: string): Promise<any> => {
     const response = await fetch(
-      `${Config.BASE_URL}/categoryFields?includeChildCategories=true&splitByCategoryIDs=true&flatChoices=true&groupChoicesBySection=true&flat=true`
+      `${Config.BASE_URL}/categoryFields?categorySlugs=${categorySlug}&includeChildCategories=true&splitByCategoryIDs=true&flatChoices=true&groupChoicesBySection=true&flat=true`,
+      {
+        headers: {
+          'accept': 'application/json',
+        },
+      }
     );
 
     if (!response.ok) {
@@ -23,7 +28,6 @@ export const CategoryService = {
       throw new Error(errorData.message || 'Failed to load specific details for this category. Please try again.');
     }
 
-    const data = await response.json();
-    return data[categoryID] || [];
+    return await response.json();
   },
 };

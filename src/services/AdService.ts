@@ -7,7 +7,8 @@ export const AdService = {
     query?: string, 
     minPrice?: number, 
     maxPrice?: number,
-    locationID: string = '0-1' // Default to Lebanon
+    locationID: string = '0-1',
+    dynamicFilters: Record<string, any> = {}
   ): Promise<SearchResponse> => {
     const index = 'olx-lb-production-ads-en';
     const header = { index: index };
@@ -37,6 +38,25 @@ export const AdService = {
         },
       });
     }
+
+    // Dynamic Filters
+    Object.entries(dynamicFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value) && value.length > 0) {
+          // Multiple choice
+          queryBlock.bool.must.push({ terms: { [`extraFields.${key}`]: value } });
+        } else if (typeof value === 'object' && (value.min !== undefined || value.max !== undefined)) {
+          // Range (like price)
+          const range: any = {};
+          if (value.min !== undefined) range.gte = value.min;
+          if (value.max !== undefined) range.lte = value.max;
+          queryBlock.bool.must.push({ range: { [`extraFields.${key}`]: range } });
+        } else {
+          // Single choice
+          queryBlock.bool.must.push({ term: { [`extraFields.${key}`]: value } });
+        }
+      }
+    });
 
     // Text Search
     if (query) {

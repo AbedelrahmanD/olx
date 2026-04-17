@@ -139,4 +139,28 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  chipsRow: {
+    flexDirection: 'row',
+  },
+  chip: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: Colors.lightGray,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+  },
+  selectedChip: {
+    backgroundColor: '#333',
+    borderColor: '#333',
+  },
+  chipText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '600',
+  },
+  selectedChipText: {
+    color: Colors.white,
+  },
 });

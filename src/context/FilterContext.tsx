@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 type Location = {
   externalID: string;
@@ -7,15 +7,18 @@ type Location = {
 };
 
 type FilterState = {
+  categoryID: string | undefined;
   minPrice: number | undefined;
   maxPrice: number | undefined;
   location: Location;
+  dynamicFilters: Record<string, any>;
 };
 
 type FilterContextType = {
   filters: FilterState;
   updateFilters: (updates: Partial<FilterState>) => void;
-  resetFilters: () => void;
+  updateDynamicFilter: (key: string, value: any) => void;
+  resetFilters: (categoryID?: string) => void;
 };
 
 const defaultLocation = {
@@ -28,25 +31,57 @@ const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [filters, setFilters] = useState<FilterState>({
+    categoryID: undefined,
     minPrice: undefined,
     maxPrice: undefined,
     location: defaultLocation,
+    dynamicFilters: {},
   });
 
-  const updateFilters = (updates: Partial<FilterState>) => {
-    setFilters((prev) => ({ ...prev, ...updates }));
-  };
+  const updateFilters = useCallback((updates: Partial<FilterState>) => {
+    setFilters((prev) => {
+      if (updates.categoryID && updates.categoryID !== prev.categoryID) {
+        return {
+          ...updates,
+          categoryID: updates.categoryID,
+          minPrice: undefined,
+          maxPrice: undefined,
+          location: prev.location,
+          dynamicFilters: {},
+        } as FilterState;
+      }
+      
+      const hasChanged = Object.entries(updates).some(
+        ([key, value]) => (prev as any)[key] !== value
+      );
 
-  const resetFilters = () => {
+      if (!hasChanged) return prev;
+      return { ...prev, ...updates };
+    });
+  }, []);
+
+  const updateDynamicFilter = useCallback((key: string, value: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      dynamicFilters: {
+        ...prev.dynamicFilters,
+        [key]: value,
+      },
+    }));
+  }, []);
+
+  const resetFilters = useCallback((categoryID?: string) => {
     setFilters({
+      categoryID: categoryID || undefined,
       minPrice: undefined,
       maxPrice: undefined,
       location: defaultLocation,
+      dynamicFilters: {},
     });
-  };
+  }, []);
 
   return (
-    <FilterContext.Provider value={{ filters, updateFilters, resetFilters }}>
+    <FilterContext.Provider value={{ filters, updateFilters, updateDynamicFilter, resetFilters }}>
       {children}
     </FilterContext.Provider>
   );

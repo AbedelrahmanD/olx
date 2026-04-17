@@ -16,8 +16,8 @@ import { useFilters } from '../../context/FilterContext';
 const AdListScreen = ({ route, navigation }: any) => {
   const { category, rootCategory } = route.params;
   const { language, t } = useLanguage();
-  const { filters } = useFilters();
-  const { minPrice, maxPrice, location } = filters;
+  const { filters, updateFilters } = useFilters();
+  const { minPrice, maxPrice, location, dynamicFilters } = filters;
 
   const [ads, setAds] = useState<Ad[]>([]);
   const [total, setTotal] = useState(0);
@@ -28,11 +28,23 @@ const AdListScreen = ({ route, navigation }: any) => {
 
   const debounceTimer = useRef<any>(null);
 
-  const fetchAds = useCallback(async (query: string, minP?: number, maxP?: number, locID: string = '0-1') => {
+  useEffect(() => {
+    // Sync current category with filter context. 
+    // The context will auto-reset filters if the categoryID differs.
+    updateFilters({ categoryID: category.externalID });
+  }, [category.externalID, updateFilters]);
+
+  const fetchAds = useCallback(async (
+    query: string, 
+    minP?: number, 
+    maxP?: number, 
+    locID: string = '0-1',
+    dynFilters: Record<string, any> = {}
+  ) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await AdService.searchAds(category.externalID, query, minP, maxP, locID);
+      const response = await AdService.searchAds(category.externalID, query, minP, maxP, locID, dynFilters);
       const hits = response?.hits?.hits || [];
       setAds(hits.map((h: SearchHit) => h._source));
       setTotal(response?.hits?.total?.value || 0);
@@ -56,7 +68,7 @@ const AdListScreen = ({ route, navigation }: any) => {
     }
 
     debounceTimer.current = setTimeout(() => {
-      fetchAds(text, minPrice, maxPrice, location.externalID);
+      fetchAds(text, minPrice, maxPrice, location.externalID, dynamicFilters);
     }, 500);
   };
 
@@ -68,7 +80,7 @@ const AdListScreen = ({ route, navigation }: any) => {
   };
 
   useEffect(() => {
-    fetchAds(searchQuery, minPrice, maxPrice, location.externalID);
+    fetchAds(searchQuery, minPrice, maxPrice, location.externalID, dynamicFilters);
   }, [filters, searchQuery, fetchAds]);
 
   useEffect(() => {
@@ -147,7 +159,7 @@ const AdListScreen = ({ route, navigation }: any) => {
       ) : error ? (
         <View style={styles.center}>
           <Text style={GlobalStyles.errorText}>{error}</Text>
-          <TouchableOpacity onPress={() => fetchAds(searchQuery, minPrice, maxPrice, location.externalID)} style={{ marginTop: 10 }}>
+          <TouchableOpacity onPress={() => fetchAds(searchQuery, minPrice, maxPrice, location.externalID, dynamicFilters)} style={{ marginTop: 10 }}>
             <Text style={{ color: Colors.primary, fontWeight: 'bold' }}>{t('retry')}</Text>
           </TouchableOpacity>
         </View>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './FilterScreen.styles';
@@ -7,10 +7,12 @@ import { Colors } from '../../theme/Colors';
 import { useLanguage } from '../../context/LanguageContext';
 import { useFilters } from '../../context/FilterContext';
 import { CATEGORY_IMAGE_MAP } from '../../utils/CategoryImageMap';
+import { CategoryService } from '../../services/CategoryService';
+import { DynamicField } from '../../components/DynamicFilters/DynamicField';
 
 const FilterScreen = ({ navigation, route }: any) => {
   const { t, language } = useLanguage();
-  const { filters, updateFilters, resetFilters } = useFilters();
+  const { filters, updateFilters, updateDynamicFilter, resetFilters } = useFilters();
 
   const {
     category,
@@ -20,10 +22,40 @@ const FilterScreen = ({ navigation, route }: any) => {
   const [minPrice, setMinPrice] = useState(filters.minPrice ? String(filters.minPrice) : '');
   const [maxPrice, setMaxPrice] = useState(filters.maxPrice ? String(filters.maxPrice) : '');
   const [selectedLocation, setSelectedLocation] = useState(filters.location);
+  const [dynamicFields, setDynamicFields] = useState<any[]>([]);
+  const [loadingFields, setLoadingFields] = useState(false);
 
   useEffect(() => {
     setSelectedLocation(filters.location);
   }, [filters.location]);
+
+  useEffect(() => {
+    const fetchFields = async () => {
+      if (!category?.slug) return;
+      setLoadingFields(true);
+      try {
+        const data = await CategoryService.getCategoryFields(category.slug);
+        let allFields: any[] = [];
+        Object.values(data).forEach((item: any) => {
+          if (item.flatFields) {
+            allFields = [...allFields, ...item.flatFields];
+          }
+        });
+        
+        // Filter those that are filterable and NOT 'price' (already handled in fixed filters)
+        const filterableFields = allFields.filter(f => 
+          f.roles?.includes('filterable') && f.attribute !== 'price'
+        );
+        setDynamicFields(filterableFields);
+      } catch (error) {
+        console.error('Error loading fields:', error);
+      } finally {
+        setLoadingFields(false);
+      }
+    };
+
+    fetchFields();
+  }, [category?.slug]);
 
   const handleApply = () => {
     updateFilters({
@@ -42,9 +74,7 @@ const FilterScreen = ({ navigation, route }: any) => {
   };
 
   const handleLocationPress = () => {
-    navigation.navigate('LocationPicker', {
-      // No callback passed anymore, we'll use navigate back with params
-    });
+    navigation.navigate('LocationPicker');
   };
 
   // Resolve Localized Names
@@ -65,17 +95,13 @@ const FilterScreen = ({ navigation, route }: any) => {
             <Text style={styles.resetText}>{t('clearAll')}</Text>
           </TouchableOpacity>
         </View>
-        <Text style={[styles.title,]}>
-          {t('filters')}
-        </Text>
+        <Text style={styles.title}>{t('filters')}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Category Section */}
         <View style={styles.section}>
-          <Text style={[styles.label,]}>
-            {t('category')}
-          </Text>
+          <Text style={styles.label}>{t('category')}</Text>
           <View style={styles.categoryContainer}>
             <View style={styles.categoryInfo}>
               <View style={styles.categoryIcon}>
@@ -102,9 +128,7 @@ const FilterScreen = ({ navigation, route }: any) => {
 
         {/* Location Section */}
         <TouchableOpacity style={styles.section} onPress={handleLocationPress}>
-          <Text style={[styles.label,]}>
-            {t('location')}
-          </Text>
+          <Text style={styles.label}>{t('location')}</Text>
           <View style={styles.locationContainer}>
             <View style={[styles.locationTextContainer, { alignItems: language === 'ar' ? 'flex-end' : 'flex-start' }]}>
               <Text style={styles.locationName}>{locationName}</Text>
@@ -114,13 +138,11 @@ const FilterScreen = ({ navigation, route }: any) => {
         </TouchableOpacity>
 
         {/* Price Section */}
-        <View style={[styles.section, styles.sectionNoBorder]}>
-          <Text style={[styles.label,]}>
-            {t('price')}
-          </Text>
+        <View style={styles.section}>
+          <Text style={styles.label}>{t('price')}</Text>
           <View style={styles.priceInputRow}>
             <TextInput
-              style={[styles.priceInput,]}
+              style={styles.priceInput}
               placeholder={t('min')}
               placeholderTextColor={Colors.mediumGray}
               keyboardType='numeric'
@@ -128,7 +150,7 @@ const FilterScreen = ({ navigation, route }: any) => {
               onChangeText={setMinPrice}
             />
             <TextInput
-              style={[styles.priceInput,]}
+              style={styles.priceInput}
               placeholder={t('max')}
               placeholderTextColor={Colors.mediumGray}
               keyboardType='numeric'
@@ -137,14 +159,29 @@ const FilterScreen = ({ navigation, route }: any) => {
             />
           </View>
         </View>
+
+        {/* Dynamic Fields */}
+        {loadingFields ? (
+          <View style={{ padding: 20 }}>
+            <ActivityIndicator color={Colors.primary} />
+          </View>
+        ) : (
+          dynamicFields.map(field => (
+            <DynamicField
+              key={field.id}
+              field={field}
+              value={filters.dynamicFilters[field.attribute]}
+              onUpdate={(val) => updateDynamicFilter(field.attribute, val)}
+              styles={styles}
+            />
+          ))
+        )}
       </ScrollView>
 
       {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
-          <Text style={styles.applyButtonText}>
-            {t('seeResults')}
-          </Text>
+          <Text style={styles.applyButtonText}>{t('seeResults')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
