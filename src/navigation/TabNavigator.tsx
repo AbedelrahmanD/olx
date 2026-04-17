@@ -6,7 +6,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../theme/Colors';
 import { styles } from './TabNavigator.styles';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import SearchScreen from '../screens/SearchScreen/SearchScreen';
 import SellScreen from '../screens/SellScreen';
 import ChatScreen from '../screens/ChatScreen';
 import AccountScreen from '../screens/AccountScreen';

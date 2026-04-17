@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useLanguage } from '../../context/LanguageContext';
 import { Colors } from '../../theme/Colors';
 import { GlobalStyles } from '../../theme/GlobalStyles';
-import { StyleSheet } from 'react-native';
+import SubCategoryItem from '../../components/SubCategoryItem/SubCategoryItem';
 
 const SubCategoryScreen = ({ route, navigation }: any) => {
   const { category } = route.params;
@@ -18,22 +18,6 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
       navigation.navigate('AdList', { category: item });
     }
   };
-
-  const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={[styles.item, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}
-      onPress={() => handleCategoryPress(item)}
-    >
-      <Text style={styles.itemName}>
-        {language === 'ar' ? item.name_l1 : item.name}
-      </Text>
-      <Icon
-        name={language === 'ar' ? 'chevron-left' : 'chevron-right'}
-        size={24}
-        color={Colors.mediumGray}
-      />
-    </TouchableOpacity>
-  );
 
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>
@@ -49,7 +33,12 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
 
       <FlatList
         data={category.children}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <SubCategoryItem 
+            item={item} 
+            onPress={() => handleCategoryPress(item)} 
+          />
+        )}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
       />
@@ -61,7 +50,7 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.gray,
+    borderBottomColor: '#f1f5f9',
     alignItems: 'center',
     backgroundColor: '#fff',
   },
@@ -73,18 +62,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   list: {
-    paddingVertical: 8,
-  },
-  item: {
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.gray,
-  },
-  itemName: {
-    fontSize: 16,
-    color: Colors.black,
+    paddingVertical: 4,
   },
 });
 

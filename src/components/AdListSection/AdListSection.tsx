@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { AdService } from '../../services/AdService';
-import { Ad, SearchHit } from '../../types';
+import { Ad } from '../../types/Ad';
+import { SearchHit } from '../../types/Search';
 import AdCard from '../AdCard/AdCard';
 import { styles } from './AdListSection.styles';
 import { Colors } from '../../theme/Colors';

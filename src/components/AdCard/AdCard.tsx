@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Ad } from '../../types';
+import { Ad } from '../../types/Ad';
 import { styles } from './AdCard.styles';
 import { Colors } from '../../theme/Colors';
 import { getRelativeTime } from '../../utils/DateUtils';

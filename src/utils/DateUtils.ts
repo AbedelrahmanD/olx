@@ -1,4 +1,4 @@
-import { Language } from '../types';
+import { Language, TranslationKeys } from '../types/Language';
 import { translations } from '../translations/translations';
 
 export const getRelativeTime = (timestamp: number, lang: Language = 'en'): string => {

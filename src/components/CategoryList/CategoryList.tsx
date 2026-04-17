@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { CategoryService } from '../../services/CategoryService';
-import { Category } from '../../types';
+import { Category } from '../../types/Category';
 import { styles } from './CategoryList.styles';
-import CategoryItem from './components/CategoryItem';
+import CategoryItem from '../CategoryItem/CategoryItem';
 import { Colors } from '../../theme/Colors';
 import { GlobalStyles } from '../../theme/GlobalStyles';
 import { useLanguage } from '../../context/LanguageContext';

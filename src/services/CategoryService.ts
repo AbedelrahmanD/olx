@@ -1,4 +1,4 @@
-import { Category } from '../types';
+import { Category } from '../types/Category';
 import { Config } from '../constants/Config';
 
 export const CategoryService = {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { I18nManager } from 'react-native';
-import { translations, Language, TranslationKeys } from '../translations/translations';
+import { translations } from '../translations/translations';
+import { Language, TranslationKeys } from '../types/Language';
 import RNRestart from 'react-native-restart';
 
 type LanguageContextType = {

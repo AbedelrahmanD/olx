@@ -21,7 +21,7 @@ const FilterScreen = () => {
         const fields = await CategoryService.getCategoryFields(selectedCategory.id);
         setDynamicFields(fields);
       } catch (err) {
-        Alert.alert(t('errorTitle'), 'Failed to load dynamic filters for this category.');
+        Alert.alert(t('errorTitle'), t('fetchError'));
       } finally {
         setLoading(false);
       }
@@ -43,7 +43,7 @@ const FilterScreen = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={[styles.sectionTitle, { textAlign: language === 'ar' ? 'right' : 'left' }]}>
-          {language === 'ar' ? 'معلومات أساسية' : 'Basic Information'}
+          {t('basicInformation')}
         </Text>
         
         <TouchableOpacity style={[styles.filterItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
@@ -67,13 +67,13 @@ const FilterScreen = () => {
         </Text>
         <View style={[styles.priceInputContainer, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           <TextInput 
-            placeholder={language === 'ar' ? 'الأقل' : 'Min'} 
+            placeholder={t('min')} 
             placeholderTextColor={Colors.mediumGray}
             style={[styles.priceInput, { textAlign: language === 'ar' ? 'right' : 'left' }]}
             keyboardType='numeric'
           />
           <TextInput 
-            placeholder={language === 'ar' ? 'الأعلى' : 'Max'} 
+            placeholder={t('max')} 
             placeholderTextColor={Colors.mediumGray}
             style={[styles.priceInput, { textAlign: language === 'ar' ? 'right' : 'left' }]}
             keyboardType='numeric'
@@ -93,7 +93,7 @@ const FilterScreen = () => {
               <TouchableOpacity key={field.id} style={[styles.filterItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
                 <Text style={styles.filterLabel}>{field.label}</Text>
                 <View style={[GlobalStyles.row, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
-                  <Text style={styles.filterValue}>{language === 'ar' ? 'الكل' : 'Any'}</Text>
+                  <Text style={styles.filterValue}>{t('any')}</Text>
                   <Icon name={language === 'ar' ? 'chevron-left' : 'chevron-right'} size={20} color={Colors.mediumGray} />
                 </View>
               </TouchableOpacity>

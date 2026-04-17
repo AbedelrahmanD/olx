@@ -1,4 +1,4 @@
-import { SearchResponse } from '../types';
+import { SearchResponse } from '../types/Search';
 import { Config } from '../constants/Config';
 
 export const AdService = {
