@@ -3,25 +3,41 @@ import { Config } from '../constants/Config';
 
 export const AdService = {
   searchAds: async (categoryID?: string, query?: string): Promise<SearchResponse> => {
-    const body = [
-      { index: Config.ADS_INDEX },
-      {
-        query: {
-          bool: {
-            must: [
-              categoryID ? { term: { 'category.externalID': categoryID } } : { match_all: {} },
-              query ? { match: { title: query } } : null,
-            ].filter(Boolean),
-          },
+    const header = { index: Config.ADS_INDEX };
+    const queryBody: any = {
+      from: 0,
+      size: 12,
+      track_total_hits: 200000,
+      query: {
+        bool: {
+          must: [],
         },
-        size: 20,
-        from: 0,
-        track_total_hits: 10000,
-        timeout: '5s',
       },
-    ];
+      sort: [
+        { timestamp: { order: 'desc' } },
+        { id: { order: 'desc' } },
+      ],
+    };
 
-    const ndjson = body.map((item) => JSON.stringify(item)).join('\n') + '\n';
+    // Add category filter if provided
+    if (categoryID) {
+      queryBody.query.bool.must.push({ term: { 'category.externalID': categoryID } });
+    }
+
+    // Add location filter (hardcoded to Lebanon as per requirement)
+    queryBody.query.bool.must.push({ term: { 'location.externalID': '0-1' } });
+
+    // Add text search query if provided
+    if (query) {
+      queryBody.query.bool.must.push({ match: { title: query } });
+    }
+
+    // Default to match_all if no specific filters
+    if (queryBody.query.bool.must.length === 0) {
+      queryBody.query.bool.must.push({ match_all: {} });
+    }
+
+    const body = JSON.stringify(header) + '\n' + JSON.stringify(queryBody) + '\n';
 
     const response = await fetch(Config.SEARCH_URL, {
       method: 'POST',
@@ -29,7 +45,7 @@ export const AdService = {
         'Content-Type': 'application/x-ndjson',
         'Authorization': Config.AUTH_TOKEN,
       },
-      body: ndjson,
+      body: body,
     });
 
     if (!response.ok) {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollView, SafeAreaView } from 'react-native';
+import { ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import HomeHeader from '../../components/HomeHeader/HomeHeader';
 import Banner from '../../components/Banner/Banner';
 import CategoryList from '../../components/CategoryList/CategoryList';
@@ -13,15 +14,15 @@ const HomeScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <Banner />
         <CategoryList />
-        
-        <AdListSection 
-          title="International Properties" 
-          categoryExternalID="2" // Properties
+
+        <AdListSection
+          title='International Properties'
+          categoryExternalID='138' // Properties
         />
-        
-        <AdListSection 
-          title="Cars for Sale" 
-          categoryExternalID="23" // Cars for Sale
+
+        <AdListSection
+          title='Cars for Sale'
+          categoryExternalID='23' // Cars for Sale
         />
       </ScrollView>
     </SafeAreaView>
