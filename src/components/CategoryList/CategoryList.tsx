@@ -22,7 +22,7 @@ const CategoryList = () => {
         const data = await CategoryService.getCategories();
         setCategories(data);
       } catch (err) {
-        const message = t('fetchError');
+        const message = t('somethingWentWrong');
         setError(message);
         Alert.alert(t('errorTitle'), message);
       } finally {

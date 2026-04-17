@@ -1,20 +1,40 @@
 import { Config } from '../constants/Config';
 
-export const LocationService = {
+export type Location = {
+  id: number;
+  name: string;
+  name_l1: string;
+  externalID: string;
+  level: number;
+  hasChildren: boolean;
+  slug: string;
+};
 
-  getLocations: async () => {
-    const index = `olx-lb-production-locations-en`;
-    const header = { index };
-    const queryBody: any = {
+export const LocationService = {
+  getLocations: async (parentExternalID: string = '0-1', level?: number): Promise<Location[]> => {
+    const index = 'olx-lb-production-locations-en';
+    const header = { index: index };
+
+    const must: any[] = [
+      { term: { "hierarchy.externalID": parentExternalID } }
+    ];
+
+    // If we want to be specific about the next level
+    if (level !== undefined) {
+      must.push({ term: { level: level } });
+    }
+
+    const queryBody = {
       from: 0,
-      size: 1000,
-      track_total_hits: false,
+      size: 500,
       query: {
         bool: {
-          must: [{ term: { level: 2 } }],
-        },
+          must: must
+        }
       },
-      sort: [{ name: { order: 'asc' } }],
+      sort: [
+        { name: { order: 'asc' } }
+      ]
     };
 
     const body = JSON.stringify(header) + '\n' + JSON.stringify(queryBody) + '\n';
@@ -29,11 +49,18 @@ export const LocationService = {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'locationFetchError');
+      throw new Error('Failed to fetch locations');
     }
 
-    const result = await response.json();
-    return result.responses[0];
-  },
+    const data = await response.json();
+    if (!data.responses || data.responses.length === 0) {
+      return [];
+    }
+    const hits = data.responses[0]?.hits?.hits || [];
+
+    // If we didn't specify level, we might get the parent itself. Filter it out.
+    return hits
+      .map((h: any) => h._source)
+      .filter((loc: Location) => loc && loc.externalID !== parentExternalID);
+  }
 };

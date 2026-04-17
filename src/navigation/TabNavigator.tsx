@@ -12,6 +12,9 @@ import AccountScreen from '../screens/AccountScreen';
 import MyAdsScreen from '../screens/MyAdsScreen';
 import SubCategoryScreen from '../screens/SubCategoryScreen/SubCategoryScreen';
 import AdListScreen from '../screens/AdListScreen/AdListScreen';
+import FilterScreen from '../screens/FilterScreen/FilterScreen';
+import CategoryPickerScreen from '../screens/CategoryPickerScreen/CategoryPickerScreen';
+import LocationPickerScreen from '../screens/LocationPickerScreen/LocationPickerScreen';
 
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigationState } from '@react-navigation/native';
@@ -25,6 +28,9 @@ const HomeStack = () => {
       <Stack.Screen name='HomeMain' component={HomeScreen} />
       <Stack.Screen name='SubCategory' component={SubCategoryScreen} />
       <Stack.Screen name='AdList' component={AdListScreen} />
+      <Stack.Screen name='FilterScreen' component={FilterScreen} />
+      <Stack.Screen name='CategoryPicker' component={CategoryPickerScreen} />
+      <Stack.Screen name='LocationPicker' component={LocationPickerScreen} />
     </Stack.Navigator>
   );
 };

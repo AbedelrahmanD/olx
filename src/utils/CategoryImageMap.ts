@@ -1,0 +1,15 @@
+export const CATEGORY_IMAGE_MAP: { [key: string]: any } = {
+  'vehicles': require('../assets/images/categories/vehicles.png'),
+  'properties': require('../assets/images/categories/property.png'),
+  'mobile-phones-accessories': require('../assets/images/categories/mobile-phones-accessories.png'),
+  'electronics-home-appliances': require('../assets/images/categories/electronics-home-appliances.png'),
+  'home-furniture-decor': require('../assets/images/categories/home-furniture-decor.png'),
+  'business-industrial': require('../assets/images/categories/business-industrial.png'),
+  'pets': require('../assets/images/categories/pets.png'),
+  'services': require('../assets/images/categories/services.png'),
+  'jobs': require('../assets/images/categories/jobs.png'),
+  'kids-babies': require('../assets/images/categories/kids-babies.png'),
+  'fashion-beauty': require('../assets/images/categories/fashion-beauty.png'),
+  'sports-equipment': require('../assets/images/categories/sports-equipment.png'),
+  'hobbies-music-art-books': require('../assets/images/categories/hobbies-music-art-books.png'),
+};

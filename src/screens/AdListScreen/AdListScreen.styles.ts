@@ -106,4 +106,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  emptyContainer: {
+    padding: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#64748b',
+    marginTop: 12,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
 });

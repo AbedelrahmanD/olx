@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,43 +9,98 @@ import { Ad } from '../../types/Ad';
 import { SearchHit } from '../../types/Search';
 import SearchAdCard from '../../components/SearchAdCard/SearchAdCard';
 import { styles } from './AdListScreen.styles';
+import { GlobalStyles } from '../../theme/GlobalStyles';
 
 const AdListScreen = ({ route, navigation }: any) => {
-  const { category } = route.params;
+  const { category, rootCategory } = route.params;
   const { language, t } = useLanguage();
   const [ads, setAds] = useState<Ad[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const fetchAds = useCallback(async () => {
+  // Filtering states
+  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
+  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
+  const [location, setLocation] = useState({
+    externalID: '0-1',
+    name: 'Lebanon',
+    name_l1: 'لبنان'
+  });
+
+  const debounceTimer = useRef<any>(null);
+
+  const fetchAds = useCallback(async (query: string, minP?: number, maxP?: number, locID: string = '0-1') => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await AdService.searchAds(category.externalID, searchQuery);
+      const response = await AdService.searchAds(category.externalID, query, minP, maxP, locID);
       const hits = response?.hits?.hits || [];
       setAds(hits.map((h: SearchHit) => h._source));
       setTotal(response?.hits?.total?.value || 0);
     } catch (err) {
-      Alert.alert(t('errorTitle'), t('fetchError'));
+      const message = t('fetchError');
+      setError(message);
+      Alert.alert(t('errorTitle'), message);
     } finally {
       setLoading(false);
+      setIsTyping(false);
     }
-  }, [category.externalID, searchQuery, t]);
+  }, [category.externalID, t]);
+
+  // Handle Search Input with Debounce
+  const handleSearchChange = (text: string) => {
+    setSearchQuery(text);
+    setIsTyping(true);
+
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    debounceTimer.current = setTimeout(() => {
+      fetchAds(text, minPrice, maxPrice, location.externalID);
+    }, 500);
+  };
+
+  const handleOpenFilters = () => {
+    navigation.navigate('FilterScreen', {
+      category: category,
+      rootCategory: rootCategory,
+      initialMinPrice: minPrice,
+      initialMaxPrice: maxPrice,
+      initialLocation: location,
+      onApply: (filters: { minPrice?: number, maxPrice?: number, location?: any }) => {
+        setMinPrice(filters.minPrice);
+        setMaxPrice(filters.maxPrice);
+        if (filters.location) {
+          setLocation(filters.location);
+        }
+        fetchAds(searchQuery, filters.minPrice, filters.maxPrice, filters.location?.externalID || location.externalID);
+      }
+    });
+  };
 
   useEffect(() => {
-    fetchAds();
-  }, [fetchAds]);
+    fetchAds('', minPrice, maxPrice, location.externalID);
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
 
   const renderHeader = () => (
     <View style={styles.listHeader}>
       <View style={[styles.filterBar, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
-        <TouchableOpacity style={styles.filterChip}>
+        <TouchableOpacity style={styles.filterChip} onPress={handleOpenFilters}>
           <Icon name='filter-variant' size={16} color={Colors.primary} />
           <Text style={styles.filterChipText}>{t('filters')}</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.filterChip}>
-          <Text style={styles.filterChipText}>{t('allCountry')}</Text>
+
+        <TouchableOpacity style={styles.filterChip} onPress={handleOpenFilters}>
+          <Text style={styles.filterChipText}>
+            {language === 'ar' ? location.name_l1 : location.name}
+          </Text>
           <Icon name='chevron-down' size={16} color={Colors.mediumGray} />
         </TouchableOpacity>
 
@@ -80,23 +135,33 @@ const AdListScreen = ({ route, navigation }: any) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name={language === 'ar' ? 'arrow-right' : 'arrow-left'} size={24} color={Colors.black} />
         </TouchableOpacity>
-        
+
         <View style={[styles.searchContainer, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
-          <Icon name='magnify' size={20} color={Colors.mediumGray} />
+          {isTyping || loading ? (
+            <ActivityIndicator size='small' color={Colors.primary} />
+          ) : (
+            <Icon name='magnify' size={20} color={Colors.mediumGray} />
+          )}
           <TextInput
             placeholder={t('searchPlaceholder')}
             placeholderTextColor={Colors.mediumGray}
             style={[styles.searchInput, { textAlign: language === 'ar' ? 'right' : 'left' }]}
             value={searchQuery}
-            onChangeText={setSearchQuery}
-            onBlur={fetchAds}
+            onChangeText={handleSearchChange}
           />
         </View>
       </View>
 
-      {loading && ads.length === 0 ? (
+      {loading ? (
         <View style={styles.center}>
           <ActivityIndicator size='large' color={Colors.primary} />
+        </View>
+      ) : error ? (
+        <View style={styles.center}>
+          <Text style={GlobalStyles.errorText}>{error}</Text>
+          <TouchableOpacity onPress={() => fetchAds(searchQuery, minPrice, maxPrice, location.externalID)} style={{ marginTop: 10 }}>
+            <Text style={{ color: Colors.primary, fontWeight: 'bold' }}>{t('retry')}</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <FlatList
@@ -104,7 +169,14 @@ const AdListScreen = ({ route, navigation }: any) => {
           renderItem={({ item }) => <SearchAdCard ad={item} />}
           keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={renderHeader}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Icon name="magnify-close" size={60} color={Colors.mediumGray} />
+              <Text style={styles.emptyText}>{t('noResults')}</Text>
+            </View>
+          }
           contentContainerStyle={styles.listContent}
+          keyboardShouldPersistTaps='handled'
         />
       )}
     </SafeAreaView>

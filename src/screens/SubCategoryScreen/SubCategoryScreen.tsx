@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useLanguage } from '../../context/LanguageContext';
@@ -9,13 +9,29 @@ import SubCategoryItem from '../../components/SubCategoryItem/SubCategoryItem';
 
 const SubCategoryScreen = ({ route, navigation }: any) => {
   const { category } = route.params;
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
+  const [error, setError] = useState<string | null>(null);
 
   const handleCategoryPress = (item: any) => {
-    if (item.children && item.children.length > 0) {
-      navigation.push('SubCategory', { category: item });
-    } else {
-      navigation.navigate('AdList', { category: item });
+    setError(null);
+    try {
+      const currentRoot = route.params.rootCategory || category;
+
+      if (item.children && item.children.length > 0) {
+        navigation.push('SubCategory', { 
+          category: item, 
+          rootCategory: currentRoot 
+        });
+      } else {
+        navigation.navigate('AdList', { 
+          category: item, 
+          rootCategory: currentRoot 
+        });
+      }
+    } catch (err) {
+      const message = t('somethingWentWrong');
+      setError(message);
+      Alert.alert(t('errorTitle'), message);
     }
   };
 
@@ -31,17 +47,23 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
         <View style={{ width: 24 }} />
       </View>
 
-      <FlatList
-        data={category.children}
-        renderItem={({ item }) => (
-          <SubCategoryItem 
-            item={item} 
-            onPress={() => handleCategoryPress(item)} 
-          />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-      />
+      {error ? (
+        <View style={styles.center}>
+          <Text style={GlobalStyles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={category.children}
+          renderItem={({ item }) => (
+            <SubCategoryItem 
+              item={item} 
+              onPress={() => handleCategoryPress(item)} 
+            />
+          )}
+          keyExtractor={(item) => item?.id?.toString() || Math.random().toString()}
+          contentContainerStyle={styles.list}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -64,6 +86,11 @@ const styles = StyleSheet.create({
   list: {
     paddingVertical: 4,
   },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default SubCategoryScreen;
