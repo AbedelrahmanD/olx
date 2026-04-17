@@ -11,24 +11,20 @@ import SearchAdCard from '../../components/SearchAdCard/SearchAdCard';
 import { styles } from './AdListScreen.styles';
 import { GlobalStyles } from '../../theme/GlobalStyles';
 
+import { useFilters } from '../../context/FilterContext';
+
 const AdListScreen = ({ route, navigation }: any) => {
   const { category, rootCategory } = route.params;
   const { language, t } = useLanguage();
+  const { filters } = useFilters();
+  const { minPrice, maxPrice, location } = filters;
+
   const [ads, setAds] = useState<Ad[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Filtering states
-  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
-  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
-  const [location, setLocation] = useState({
-    externalID: '0-1',
-    name: 'Lebanon',
-    name_l1: 'لبنان'
-  });
 
   const debounceTimer = useRef<any>(null);
 
@@ -68,22 +64,14 @@ const AdListScreen = ({ route, navigation }: any) => {
     navigation.navigate('FilterScreen', {
       category: category,
       rootCategory: rootCategory,
-      initialMinPrice: minPrice,
-      initialMaxPrice: maxPrice,
-      initialLocation: location,
-      onApply: (filters: { minPrice?: number, maxPrice?: number, location?: any }) => {
-        setMinPrice(filters.minPrice);
-        setMaxPrice(filters.maxPrice);
-        if (filters.location) {
-          setLocation(filters.location);
-        }
-        fetchAds(searchQuery, filters.minPrice, filters.maxPrice, filters.location?.externalID || location.externalID);
-      }
     });
   };
 
   useEffect(() => {
-    fetchAds('', minPrice, maxPrice, location.externalID);
+    fetchAds(searchQuery, minPrice, maxPrice, location.externalID);
+  }, [filters, searchQuery, fetchAds]);
+
+  useEffect(() => {
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
     };
@@ -91,7 +79,7 @@ const AdListScreen = ({ route, navigation }: any) => {
 
   const renderHeader = () => (
     <View style={styles.listHeader}>
-      <View style={[styles.filterBar, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.filterBar}>
         <TouchableOpacity style={styles.filterChip} onPress={handleOpenFilters}>
           <Icon name='filter-variant' size={16} color={Colors.primary} />
           <Text style={styles.filterChipText}>{t('filters')}</Text>
@@ -109,19 +97,19 @@ const AdListScreen = ({ route, navigation }: any) => {
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.statusRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.statusRow}>
         <Text style={styles.showingText}>
           {t('showing')}: {total} {t('resultsFor')} {language === 'ar' ? category.name_l1 : category.name}
         </Text>
-        <TouchableOpacity style={[styles.sortButton, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+        <TouchableOpacity style={styles.sortButton}>
           <Text style={styles.sortText}>{t('sortBy')}</Text>
           <Icon name='swap-vertical' size={16} color={Colors.primary} />
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.eliteSectionHeader, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.eliteSectionHeader}>
         <Text style={styles.eliteTitle}>{t('eliteAds')}</Text>
-        <TouchableOpacity style={[styles.viewMore, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+        <TouchableOpacity style={styles.viewMore}>
           <Text style={styles.viewMoreText}>{t('viewMore')}</Text>
           <Icon name={language === 'ar' ? 'chevron-left' : 'chevron-right'} size={18} color={Colors.primary} />
         </TouchableOpacity>
@@ -131,12 +119,12 @@ const AdListScreen = ({ route, navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.header, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name={language === 'ar' ? 'arrow-right' : 'arrow-left'} size={24} color={Colors.black} />
         </TouchableOpacity>
 
-        <View style={[styles.searchContainer, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+        <View style={styles.searchContainer}>
           {isTyping || loading ? (
             <ActivityIndicator size='small' color={Colors.primary} />
           ) : (

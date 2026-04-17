@@ -66,6 +66,7 @@ export const styles = StyleSheet.create({
   },
   categoryTextContainer: {
     flex: 1,
+    alignItems: 'flex-start',
   },
   categoryName: {
     fontSize: 16,

@@ -17,19 +17,19 @@ const SubCategoryItem = ({ item, onPress }: SubCategoryItemProps) => {
 
   return (
     <TouchableOpacity
-      style={[styles.item, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}
+      style={styles.item}
       onPress={onPress}
     >
-      <View style={[styles.leftSection, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.leftSection}>
         <Text style={styles.itemName}>{displayName}</Text>
       </View>
-      
+
       <Icon
         name={language === 'ar' ? 'chevron-left' : 'chevron-right'}
         size={24}
         color={Colors.mediumGray}
       />
-    </TouchableOpacity>
+    </TouchableOpacity >
   );
 };
 

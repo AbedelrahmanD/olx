@@ -5,11 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './LocationPickerScreen.styles';
 import { LocationService, Location } from '../../services/LocationService';
 import { useLanguage } from '../../context/LanguageContext';
+import { useFilters } from '../../context/FilterContext';
 import { Colors } from '../../theme/Colors';
 import { GlobalStyles } from '../../theme/GlobalStyles';
 
 const LocationPickerScreen = ({ navigation, route }: any) => {
   const { t, language } = useLanguage();
+  const { updateFilters } = useFilters();
   const { parentLocation } = route.params || {};
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,10 +50,10 @@ const LocationPickerScreen = ({ navigation, route }: any) => {
     } else {
       // Final Area Selection 
       // As requested: pop twice then navigate to filter screen
+      updateFilters({ location: item });
       navigation.pop(2);
       navigation.navigate({
         name: 'FilterScreen',
-        params: { selectedLocation: item },
         merge: true,
       });
     }
@@ -63,14 +65,14 @@ const LocationPickerScreen = ({ navigation, route }: any) => {
 
     return (
       <TouchableOpacity
-        style={[styles.item, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}
+        style={styles.item}
         onPress={() => handleLocationPress(item)}
       >
         <View style={styles.iconCircle}>
           <Icon name="map-marker" size={20} color={Colors.mediumGray} />
         </View>
-        <View style={[styles.nameWrapper, { alignItems: language === 'ar' ? 'flex-end' : 'flex-start' }]}>
-          <View style={[styles.nameRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+        <View style={styles.nameWrapper}>
+          <View style={styles.nameRow}>
             <Text style={styles.name}>{name}</Text>
             <View style={[styles.badge, isRegion ? styles.regionBadge : styles.cityBadge]}>
               <Text style={[styles.badgeText, isRegion ? styles.regionBadgeText : styles.cityBadgeText]}>
@@ -93,7 +95,7 @@ const LocationPickerScreen = ({ navigation, route }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.header, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="close" size={24} color="#002f34" />
         </TouchableOpacity>
@@ -119,12 +121,12 @@ const LocationPickerScreen = ({ navigation, route }: any) => {
           contentContainerStyle={styles.list}
           ListHeaderComponent={!parentLocation ? (
             <TouchableOpacity
-              style={[styles.item, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}
+              style={styles.item}
               onPress={() => {
+                updateFilters({ location: { externalID: '0-1', name: 'Lebanon', name_l1: 'لبنان' } });
                 navigation.pop(1);
                 navigation.navigate({
                   name: 'FilterScreen',
-                  params: { selectedLocation: { externalID: '0-1', name: 'Lebanon', name_l1: 'لبنان' } },
                   merge: true,
                 });
 
@@ -133,7 +135,7 @@ const LocationPickerScreen = ({ navigation, route }: any) => {
               <View style={styles.iconCircle}>
                 <Icon name="earth" size={20} color="#01579b" />
               </View>
-              <View style={[styles.nameWrapper, { alignItems: language === 'ar' ? 'flex-end' : 'flex-start' }]}>
+              <View style={styles.nameWrapper}>
                 <Text style={[styles.name, { color: '#01579b' }]}>{t('allLebanon')}</Text>
               </View>
             </TouchableOpacity>

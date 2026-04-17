@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
+    flexDirection: 'row',
     padding: 12,
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -16,6 +17,7 @@ export const styles = StyleSheet.create({
     padding: 4,
   },
   searchContainer: {
+    flexDirection: 'row',
     flex: 1,
     height: 40,
     backgroundColor: '#f8fafc',
@@ -37,6 +39,7 @@ export const styles = StyleSheet.create({
     paddingTop: 12,
   },
   filterBar: {
+    flexDirection: 'row',
     paddingHorizontal: 16,
     marginBottom: 16,
   },
@@ -59,6 +62,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   statusRow: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
@@ -70,6 +74,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sortButton: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
   sortText: {
@@ -80,6 +85,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   eliteSectionHeader: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
@@ -91,6 +97,7 @@ export const styles = StyleSheet.create({
     color: '#1e293b',
   },
   viewMore: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
   viewMoreText: {

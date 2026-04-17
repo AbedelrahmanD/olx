@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
+    flexDirection: 'row',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#eaeeef',
@@ -24,6 +25,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   item: {
+    flexDirection: 'row',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#eaeeef',
@@ -40,8 +42,10 @@ export const styles = StyleSheet.create({
   },
   nameWrapper: {
     flex: 1,
+    alignItems: 'flex-start',
   },
   nameRow: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 2,
   },

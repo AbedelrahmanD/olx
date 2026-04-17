@@ -50,7 +50,7 @@ const CategoryList = () => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.headerContainer, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={[styles.headerContainer]}>
         <Text style={styles.headerTitle}>{language === 'ar' ? 'تصفح الفئات' : 'Browse Categories'}</Text>
         <TouchableOpacity>
           <Text style={styles.seeAllText}>{t('seeAll')}</Text>
@@ -61,7 +61,6 @@ const CategoryList = () => {
         renderItem={({ item }) => <CategoryItem item={item} />}
         keyExtractor={(item) => item.id.toString()}
         horizontal
-        inverted={language === 'ar'}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />

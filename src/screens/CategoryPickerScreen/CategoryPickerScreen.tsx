@@ -37,15 +37,15 @@ const CategoryPickerScreen = ({ navigation }: any) => {
   const handleCategoryPress = (item: Category) => {
     if (item.children && item.children.length > 0) {
       // Navigate to subcategory selection, passing this item as root
-      navigation.push('SubCategory', { 
-        category: item, 
-        rootCategory: item 
+      navigation.push('SubCategory', {
+        category: item,
+        rootCategory: item
       });
     } else {
       // Direct navigation to ad list
-      navigation.navigate('AdList', { 
-        category: item, 
-        rootCategory: item 
+      navigation.navigate('AdList', {
+        category: item,
+        rootCategory: item
       });
     }
   };
@@ -55,8 +55,8 @@ const CategoryPickerScreen = ({ navigation }: any) => {
     const icon = CATEGORY_IMAGE_MAP[item.slug];
 
     return (
-      <TouchableOpacity 
-        style={[styles.item, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]} 
+      <TouchableOpacity
+        style={styles.item}
         onPress={() => handleCategoryPress(item)}
       >
         <View style={[styles.iconContainer, language === 'ar' ? { marginLeft: 16, marginRight: 0 } : { marginRight: 16 }]}>
@@ -69,10 +69,10 @@ const CategoryPickerScreen = ({ navigation }: any) => {
         <Text style={[styles.name, { textAlign: language === 'ar' ? 'right' : 'left' }]}>
           {name}
         </Text>
-        <Icon 
-          name={language === 'ar' ? 'chevron-left' : 'chevron-right'} 
-          size={24} 
-          color="#ccc" 
+        <Icon
+          name={language === 'ar' ? 'chevron-left' : 'chevron-right'}
+          size={24}
+          color="#ccc"
         />
       </TouchableOpacity>
     );
@@ -80,7 +80,7 @@ const CategoryPickerScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.header, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name={language === 'ar' ? 'arrow-right' : 'arrow-left'} size={24} color="#333" />
         </TouchableOpacity>

@@ -3,6 +3,7 @@ import { Colors } from '../../theme/Colors';
 
 export const styles = StyleSheet.create({
   item: {
+    flexDirection: 'row',
     padding: 12,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -11,6 +12,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   leftSection: {
+    flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },

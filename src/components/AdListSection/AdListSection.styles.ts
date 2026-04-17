@@ -27,4 +27,9 @@ export const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 16,
   },
+  loadingContainer: {
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

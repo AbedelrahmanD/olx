@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator, BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../theme/Colors';
 import { styles } from './TabNavigator.styles';
@@ -10,30 +9,11 @@ import SellScreen from '../screens/SellScreen';
 import ChatScreen from '../screens/ChatScreen';
 import AccountScreen from '../screens/AccountScreen';
 import MyAdsScreen from '../screens/MyAdsScreen';
-import SubCategoryScreen from '../screens/SubCategoryScreen/SubCategoryScreen';
-import AdListScreen from '../screens/AdListScreen/AdListScreen';
-import FilterScreen from '../screens/FilterScreen/FilterScreen';
-import CategoryPickerScreen from '../screens/CategoryPickerScreen/CategoryPickerScreen';
-import LocationPickerScreen from '../screens/LocationPickerScreen/LocationPickerScreen';
 
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigationState } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-const HomeStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name='HomeMain' component={HomeScreen} />
-      <Stack.Screen name='SubCategory' component={SubCategoryScreen} />
-      <Stack.Screen name='AdList' component={AdListScreen} />
-      <Stack.Screen name='FilterScreen' component={FilterScreen} />
-      <Stack.Screen name='CategoryPicker' component={CategoryPickerScreen} />
-      <Stack.Screen name='LocationPicker' component={LocationPickerScreen} />
-    </Stack.Navigator>
-  );
-};
 
 type TabButtonProps = BottomTabBarButtonProps & {
   label: string;
@@ -96,7 +76,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen
         name={'HOME'}
-        component={HomeStack}
+        component={HomeScreen}
         options={{
           tabBarButton: (props) => (
             <TabButton
@@ -166,3 +146,4 @@ const TabNavigator = () => {
 };
 
 export default TabNavigator;
+

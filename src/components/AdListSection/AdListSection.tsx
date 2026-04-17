@@ -53,7 +53,7 @@ const AdListSection = ({ title, categoryExternalID }: AdListSectionProps) => {
       </View>
 
       {loading ? (
-        <View style={{ height: 150, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.loadingContainer}>
           <ActivityIndicator size='small' color={Colors.primary} />
         </View>
       ) : error ? (
@@ -64,7 +64,6 @@ const AdListSection = ({ title, categoryExternalID }: AdListSectionProps) => {
           renderItem={renderAdCard}
           keyExtractor={(item) => item.id.toString()}
           horizontal
-          inverted={language === 'ar'}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
         />

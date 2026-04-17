@@ -36,4 +36,20 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.black,
   },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  langButton: {
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    backgroundColor: Colors.primary + '20',
+  },
+  langButtonText: {
+    fontWeight: 'bold',
+    color: Colors.primary,
+  },
 });

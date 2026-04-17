@@ -23,7 +23,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
     setLanguageState(lang);
 
-    // RNRestart.Restart();
+    RNRestart.restart();
   };
 
   const t = (key: TranslationKeys): string => {

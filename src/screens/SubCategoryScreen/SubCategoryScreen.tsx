@@ -18,14 +18,14 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
       const currentRoot = route.params.rootCategory || category;
 
       if (item.children && item.children.length > 0) {
-        navigation.push('SubCategory', { 
-          category: item, 
-          rootCategory: currentRoot 
+        navigation.push('SubCategory', {
+          category: item,
+          rootCategory: currentRoot
         });
       } else {
-        navigation.navigate('AdList', { 
-          category: item, 
-          rootCategory: currentRoot 
+        navigation.navigate('AdList', {
+          category: item,
+          rootCategory: currentRoot
         });
       }
     } catch (err) {
@@ -37,7 +37,7 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
 
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>
-      <View style={[styles.header, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name={language === 'ar' ? 'arrow-right' : 'arrow-left'} size={24} color={Colors.black} />
         </TouchableOpacity>
@@ -55,9 +55,9 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
         <FlatList
           data={category.children}
           renderItem={({ item }) => (
-            <SubCategoryItem 
-              item={item} 
-              onPress={() => handleCategoryPress(item)} 
+            <SubCategoryItem
+              item={item}
+              onPress={() => handleCategoryPress(item)}
             />
           )}
           keyExtractor={(item) => item?.id?.toString() || Math.random().toString()}
@@ -70,6 +70,7 @@ const SubCategoryScreen = ({ route, navigation }: any) => {
 
 const styles = StyleSheet.create({
   header: {
+    flexDirection: 'row',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',

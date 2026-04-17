@@ -14,7 +14,7 @@ const HomeHeader = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+      <View style={styles.topRow}>
         <TouchableOpacity style={styles.locationContainer}>
           <Icon name='map-marker-outline' size={20} color={Colors.accent} />
           <Text style={styles.locationText}>{t('allLebanon')}</Text>
@@ -23,9 +23,9 @@ const HomeHeader = () => {
 
         <TouchableOpacity 
           onPress={toggleLanguage}
-          style={{ paddingVertical: 4, paddingHorizontal: 12, borderRadius: 20, backgroundColor: Colors.primary + '20' }}
+          style={styles.langButton}
         >
-          <Text style={{ fontWeight: 'bold', color: Colors.primary }}>
+          <Text style={styles.langButtonText}>
             {language === 'en' ? 'العربية' : 'English'}
           </Text>
         </TouchableOpacity>
