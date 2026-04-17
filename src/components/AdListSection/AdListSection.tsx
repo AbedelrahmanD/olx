@@ -6,6 +6,7 @@ import AdCard from '../AdCard/AdCard';
 import { styles } from './AdListSection.styles';
 import { Colors } from '../../theme/Colors';
 import { GlobalStyles } from '../../theme/GlobalStyles';
+import { useLanguage } from '../../context/LanguageContext';
 
 type AdListSectionProps = {
   title: string;
@@ -16,6 +17,7 @@ const AdListSection = ({ title, categoryExternalID }: AdListSectionProps) => {
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { language, t } = useLanguage();
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -26,15 +28,15 @@ const AdListSection = ({ title, categoryExternalID }: AdListSectionProps) => {
         const hits = response?.hits?.hits || [];
         setAds(hits.map((h: SearchHit) => h._source));
       } catch (err) {
-        const message = 'Failed to load ads. Please check your connection.';
+        const message = t('fetchError');
         setError(message);
-        Alert.alert('Error', message);
+        Alert.alert(t('errorTitle'), message);
       } finally {
         setLoading(false);
       }
     };
     fetchAds();
-  }, [categoryExternalID, title]);
+  }, [categoryExternalID, language, t]);
 
   const renderAdCard = ({ item }: { item: Ad }) => (
     <AdCard ad={item} />
@@ -45,10 +47,10 @@ const AdListSection = ({ title, categoryExternalID }: AdListSectionProps) => {
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>{title}</Text>
         <TouchableOpacity>
-          <Text style={styles.seeAllText}>See all</Text>
+          <Text style={styles.seeAllText}>{t('seeAll')}</Text>
         </TouchableOpacity>
       </View>
-      
+
       {loading ? (
         <View style={{ height: 150, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size='small' color={Colors.primary} />
@@ -59,8 +61,9 @@ const AdListSection = ({ title, categoryExternalID }: AdListSectionProps) => {
         <FlatList
           data={ads}
           renderItem={renderAdCard}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           horizontal
+          inverted={language === 'ar'}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
         />

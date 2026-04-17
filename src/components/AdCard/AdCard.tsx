@@ -5,13 +5,15 @@ import { Ad } from '../../types';
 import { styles } from './AdCard.styles';
 import { Colors } from '../../theme/Colors';
 import { getRelativeTime } from '../../utils/DateUtils';
+import { useLanguage } from '../../context/LanguageContext';
 
 type AdCardProps = {
   ad: Ad;
 };
 
 const AdCard = ({ ad }: AdCardProps) => {
-  // Extract attributes from formattedExtraFields
+  const { t, language } = useLanguage();
+
   const getFormattedAttr = (attr: string) =>
     ad.formattedExtraFields?.find((f) => f.attribute === attr)?.formattedValue;
 
@@ -22,75 +24,68 @@ const AdCard = ({ ad }: AdCardProps) => {
   const rooms = getFormattedAttr('rooms');
   const bathrooms = getFormattedAttr('bathrooms');
 
-  // Construct image URL: https://olx-lb-production.s3.eu-west-1.amazonaws.com/image/{id}/{externalID}
-  const mainPhoto = ad.photos?.[0] || ad.coverPhoto;
-  // const imageUrl = mainPhoto
-  //   ? `https://olx-lb-production.s3.eu-west-1.amazonaws.com/image/${mainPhoto.id}/${mainPhoto.externalID}`
-  //   : null;
-  const imageUrl = `https://images.olx.com.lb/thumbnails/${ad.id}-800x600.webp`;
+  const imageUrl = `https://images.olx.com.lb/thumbnails/${ad.coverPhoto.id}-400x300.webp`;
 
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.9}>
       <View style={{ backgroundColor: Colors.gray, height: 120 }}>
-        {imageUrl && (
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.image}
-          />
-        )}
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.image}
+        />
       </View>
 
       <View style={styles.content}>
-        <View style={styles.priceRow}>
+        <View style={[styles.priceRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           <Text style={styles.price}>
-            USD {price || '0'}
+            {t('usd')} {price || '0'}
           </Text>
           <Icon name='heart-outline' size={20} color='#002f34' />
         </View>
 
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={[styles.title, { textAlign: language === 'ar' ? 'right' : 'left' }]} numberOfLines={2}>
           {ad.title}
         </Text>
 
-        <View style={styles.paramsRow}>
+        <View style={[styles.paramsRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           {rooms && (
-            <View style={styles.paramItem}>
+            <View style={[styles.paramItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
               <Icon name='bed-outline' size={14} color='#7f9799' />
               <Text style={styles.paramText}>{rooms}</Text>
             </View>
           )}
           {bathrooms && (
-            <View style={styles.paramItem}>
+            <View style={[styles.paramItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
               <Icon name='shower' size={14} color='#7f9799' />
               <Text style={styles.paramText}>{bathrooms}</Text>
             </View>
           )}
           {area && (
-            <View style={styles.paramItem}>
+            <View style={[styles.paramItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
               <Icon name='vector-square' size={14} color='#7f9799' />
-              <Text style={styles.paramText}>{area} m²</Text>
+              <Text style={styles.paramText}>{area} {t('m2')}</Text>
             </View>
           )}
           {mileage && (
-            <View style={styles.paramItem}>
+            <View style={[styles.paramItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
               <Icon name='gauge' size={14} color='#7f9799' />
-              <Text style={styles.paramText}>{mileage} km</Text>
+              <Text style={styles.paramText}>{mileage} {t('km')}</Text>
             </View>
           )}
           {year && !area && (
-            <View style={styles.paramItem}>
+            <View style={[styles.paramItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
               <Icon name='calendar-outline' size={14} color='#7f9799' />
               <Text style={styles.paramText}>{year}</Text>
             </View>
           )}
         </View>
 
-        <Text style={styles.location} numberOfLines={1}>
+        <Text style={[styles.location, { textAlign: language === 'ar' ? 'right' : 'left' }]} numberOfLines={1}>
           {ad.location?.lvl2?.name || ad.location?.lvl1?.name}, {ad.location?.lvl1?.name}
         </Text>
 
-        <Text style={styles.time}>
-          {getRelativeTime(ad.createdAt)}
+        <Text style={[styles.time, { textAlign: language === 'ar' ? 'right' : 'left' }]}>
+          {getRelativeTime(ad.createdAt, language)}
         </Text>
       </View>
     </TouchableOpacity>

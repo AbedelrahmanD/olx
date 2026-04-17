@@ -6,11 +6,13 @@ import { styles } from './CategoryList.styles';
 import CategoryItem from './components/CategoryItem';
 import { Colors } from '../../theme/Colors';
 import { GlobalStyles } from '../../theme/GlobalStyles';
+import { useLanguage } from '../../context/LanguageContext';
 
 const CategoryList = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -20,15 +22,15 @@ const CategoryList = () => {
         const data = await CategoryService.getCategories();
         setCategories(data);
       } catch (err) {
-        const message = 'Failed to load categories. Please try again later.';
+        const message = t('fetchError');
         setError(message);
-        Alert.alert('Error', message);
+        Alert.alert(t('errorTitle'), message);
       } finally {
         setLoading(false);
       }
     };
     fetchCategories();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -48,10 +50,10 @@ const CategoryList = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Browse Categories</Text>
+      <View style={[styles.headerContainer, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+        <Text style={styles.headerTitle}>{language === 'ar' ? 'تصفح الفئات' : 'Browse Categories'}</Text>
         <TouchableOpacity>
-          <Text style={styles.seeAllText}>See all</Text>
+          <Text style={styles.seeAllText}>{t('seeAll')}</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -59,6 +61,7 @@ const CategoryList = () => {
         renderItem={({ item }) => <CategoryItem item={item} />}
         keyExtractor={(item) => item.id.toString()}
         horizontal
+        inverted={language === 'ar'}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />

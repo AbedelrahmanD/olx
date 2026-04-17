@@ -5,48 +5,48 @@ import { Ad } from '../../types';
 import { styles } from './ListItemAdCard.styles';
 import { Colors } from '../../theme/Colors';
 import { getRelativeTime } from '../../utils/DateUtils';
+import { useLanguage } from '../../context/LanguageContext';
 
 type ListItemAdCardProps = {
   ad: Ad;
 };
 
 const ListItemAdCard = ({ ad }: ListItemAdCardProps) => {
+  const { t, language } = useLanguage();
+
   // Extract attributes from formattedExtraFields
   const getFormattedAttr = (attr: string) =>
     ad.formattedExtraFields?.find((f) => f.attribute === attr)?.formattedValue;
 
   const price = getFormattedAttr('price');
 
-  // Construct image URL
-  const mainPhoto = ad.photos?.[0] || ad.coverPhoto;
-  const imageUrl = mainPhoto
-    ? `https://olx-lb-production.s3.eu-west-1.amazonaws.com/image/${mainPhoto.id}/${mainPhoto.externalID}`
-    : 'https://via.placeholder.com/120x120?text=No+Image';
+  // Thumbnail URL
+  const imageUrl = `https://images.olx.com.lb/thumbnails/${ad.id}-800x600.webp`;
 
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={[styles.card, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
       <Image
         source={{ uri: imageUrl }}
         style={styles.image}
       />
-      <View style={styles.content}>
-        <View style={styles.topRow}>
+      <View style={[styles.content, { alignItems: language === 'ar' ? 'flex-end' : 'flex-start' }]}>
+        <View style={[styles.topRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           <Text style={styles.price}>
-            USD {price || '0'}
+            {t('usd')} {price || '0'}
           </Text>
           <Icon name='heart-outline' size={20} color={Colors.black} />
         </View>
         
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={[styles.title, { textAlign: language === 'ar' ? 'right' : 'left' }]} numberOfLines={2}>
           {ad.title}
         </Text>
 
-        <View style={styles.bottomRow}>
+        <View style={[styles.bottomRow, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           <Text style={styles.location} numberOfLines={1}>
             {ad.location?.lvl2?.name || ad.location?.lvl1?.name}, {ad.location?.lvl1?.name}
           </Text>
           <Text style={styles.time}>
-            {getRelativeTime(ad.createdAt)}
+            {getRelativeTime(ad.createdAt, language)}
           </Text>
         </View>
       </View>

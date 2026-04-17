@@ -6,8 +6,11 @@ import Banner from '../../components/Banner/Banner';
 import CategoryList from '../../components/CategoryList/CategoryList';
 import AdListSection from '../../components/AdListSection/AdListSection';
 import { styles } from './HomeScreen.styles';
+import { useLanguage } from '../../context/LanguageContext';
 
 const HomeScreen = () => {
+  const { t } = useLanguage();
+
   return (
     <SafeAreaView style={styles.container}>
       <HomeHeader />
@@ -16,12 +19,12 @@ const HomeScreen = () => {
         <CategoryList />
 
         <AdListSection
-          title='International Properties'
+          title={t('properties')}
           categoryExternalID='138' // Properties
         />
 
         <AdListSection
-          title='Cars for Sale'
+          title={t('cars')}
           categoryExternalID='23' // Cars for Sale
         />
       </ScrollView>

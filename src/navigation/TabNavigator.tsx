@@ -9,6 +9,8 @@ import SearchScreen from '../screens/SearchScreen/SearchScreen';
 import SellScreen from '../screens/SellScreen';
 import ChatScreen from '../screens/ChatScreen';
 import AccountScreen from '../screens/AccountScreen';
+import MyAdsScreen from '../screens/MyAdsScreen';
+import { useLanguage } from '../context/LanguageContext';
 
 import { useNavigationState } from '@react-navigation/native';
 
@@ -39,30 +41,38 @@ const TabButton = (props: TabButtonProps) => {
     >
       {focused && <View style={styles.activeIndicator} />}
       <Icon name={focused ? activeIcon : icon} size={24} color={color} />
-      <Text style={[styles.label, { color }]}>{label}</Text>
+      <Text style={[styles.label, { color }]} numberOfLines={1}>{label}</Text>
     </TouchableOpacity>
   );
 };
 
-const SellButton = ({ onPress }: BottomTabBarButtonProps) => (
-  <TouchableOpacity
-    activeOpacity={0.8}
-    onPress={onPress}
-    style={styles.sellButtonContainer}
-  >
-    <View style={styles.sellButton}>
-      <Icon name={'plus'} size={35} color={Colors.black} />
-    </View>
-    <Text style={[styles.label, { color: Colors.black, marginTop: 5 }]}>{'SELL'}</Text>
-  </TouchableOpacity>
-);
+const SellButton = ({ onPress }: BottomTabBarButtonProps) => {
+  const { t } = useLanguage();
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={styles.sellButtonContainer}
+    >
+      <View style={styles.sellButton}>
+        <Icon name={'plus'} size={31} color={Colors.black} />
+      </View>
+      <Text style={[styles.label, { color: Colors.black, marginTop: 5 }]} numberOfLines={1}>{t('sell')}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const TabNavigator = () => {
+  const { t, language } = useLanguage();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [
+          styles.tabBar,
+          { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }
+        ],
       }}
     >
       <Tab.Screen
@@ -72,7 +82,7 @@ const TabNavigator = () => {
           tabBarButton: (props) => (
             <TabButton
               {...props}
-              label={'HOME'}
+              label={t('home')}
               icon={'home-outline'}
               activeIcon={'home'}
               routeName={'HOME'}
@@ -87,7 +97,7 @@ const TabNavigator = () => {
           tabBarButton: (props) => (
             <TabButton
               {...props}
-              label={'CHATS'}
+              label={t('chats')}
               icon={'message-outline'}
               activeIcon={'message'}
               routeName={'CHATS'}
@@ -104,12 +114,12 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name={'MY ADS'}
-        component={SearchScreen}
+        component={MyAdsScreen}
         options={{
           tabBarButton: (props) => (
             <TabButton
               {...props}
-              label={'MY ADS'}
+              label={t('myAds')}
               icon={'view-list-outline'}
               activeIcon={'view-list'}
               routeName={'MY ADS'}
@@ -124,7 +134,7 @@ const TabNavigator = () => {
           tabBarButton: (props) => (
             <TabButton
               {...props}
-              label={'ACCOUNT'}
+              label={t('account')}
               icon={'account-outline'}
               activeIcon={'account'}
               routeName={'ACCOUNT'}

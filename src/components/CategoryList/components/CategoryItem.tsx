@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { Category } from '../../../types';
 import { styles } from '../CategoryList.styles';
+import { useLanguage } from '../../../context/LanguageContext';
 
 const IMAGE_MAP: { [key: string]: any } = {
   'vehicles': require('../../../assets/images/categories/vehicles.png'),
@@ -23,22 +24,27 @@ type CategoryItemProps = {
   item: Category;
 };
 
-const CategoryItem = ({ item }: CategoryItemProps) => (
-  <TouchableOpacity style={styles.categoryItem}>
-    <View style={styles.iconContainer}>
-      {IMAGE_MAP[item.slug] ? (
-        <Image
-          source={IMAGE_MAP[item.slug]}
-          style={styles.categoryIcon}
-        />
-      ) : (
-        <View style={styles.categoryIcon} />
-      )}
-    </View>
-    <Text style={styles.categoryName} numberOfLines={2}>
-      {item.name}
-    </Text>
-  </TouchableOpacity>
-);
+const CategoryItem = ({ item }: CategoryItemProps) => {
+  const { language } = useLanguage();
+  const displayName = language === 'ar' ? item.name_l1 : item.name;
+
+  return (
+    <TouchableOpacity style={styles.categoryItem}>
+      <View style={styles.iconContainer}>
+        {IMAGE_MAP[item.slug] ? (
+          <Image
+            source={IMAGE_MAP[item.slug]}
+            style={styles.categoryIcon}
+          />
+        ) : (
+          <View style={styles.categoryIcon} />
+        )}
+      </View>
+      <Text style={styles.categoryName} numberOfLines={2}>
+        {displayName}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 export default CategoryItem;

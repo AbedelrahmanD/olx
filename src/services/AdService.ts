@@ -3,7 +3,8 @@ import { Config } from '../constants/Config';
 
 export const AdService = {
   searchAds: async (categoryID?: string, query?: string): Promise<SearchResponse> => {
-    const header = { index: Config.ADS_INDEX };
+    const index = `olx-lb-production-ads-en`;
+    const header = { index: index };
     const queryBody: any = {
       from: 0,
       size: 12,
@@ -24,7 +25,7 @@ export const AdService = {
       queryBody.query.bool.must.push({ term: { 'category.externalID': categoryID } });
     }
 
-    // Add location filter (hardcoded to Lebanon as per requirement)
+    // Add location filter (hardcoded to Lebanon)
     queryBody.query.bool.must.push({ term: { 'location.externalID': '0-1' } });
 
     // Add text search query if provided

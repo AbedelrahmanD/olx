@@ -6,9 +6,11 @@ import { CategoryService } from '../../services/CategoryService';
 import { styles } from './FilterScreen.styles';
 import { Colors } from '../../theme/Colors';
 import { GlobalStyles } from '../../theme/GlobalStyles';
+import { useLanguage } from '../../context/LanguageContext';
 
 const FilterScreen = () => {
-  const [selectedCategory, setSelectedCategory] = useState({ id: '2', name: 'Properties' });
+  const { t, language } = useLanguage();
+  const [selectedCategory, setSelectedCategory] = useState({ id: '2', name: t('properties') });
   const [dynamicFields, setDynamicFields] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -19,57 +21,61 @@ const FilterScreen = () => {
         const fields = await CategoryService.getCategoryFields(selectedCategory.id);
         setDynamicFields(fields);
       } catch (err) {
-        Alert.alert('Error', 'Failed to load dynamic filters for this category.');
+        Alert.alert(t('errorTitle'), 'Failed to load dynamic filters for this category.');
       } finally {
         setLoading(false);
       }
     };
     fetchFields();
-  }, [selectedCategory]);
+  }, [selectedCategory, t]);
 
   return (
     <SafeAreaView style={GlobalStyles.screenContainer}>
-      <View style={styles.header}>
+      <View style={[styles.header, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
         <TouchableOpacity>
           <Icon name='close' size={24} color={Colors.black} />
         </TouchableOpacity>
-        <Text style={styles.title}>Filters</Text>
+        <Text style={styles.title}>{t('filters')}</Text>
         <TouchableOpacity>
-          <Text style={styles.resetText}>Reset</Text>
+          <Text style={styles.resetText}>{t('reset')}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.sectionTitle}>Basic Information</Text>
+        <Text style={[styles.sectionTitle, { textAlign: language === 'ar' ? 'right' : 'left' }]}>
+          {language === 'ar' ? 'معلومات أساسية' : 'Basic Information'}
+        </Text>
         
-        <TouchableOpacity style={styles.filterItem}>
-          <Text style={styles.filterLabel}>Category</Text>
-          <View style={GlobalStyles.row}>
+        <TouchableOpacity style={[styles.filterItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+          <Text style={styles.filterLabel}>{t('category')}</Text>
+          <View style={[GlobalStyles.row, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
             <Text style={styles.filterValue}>{selectedCategory.name}</Text>
-            <Icon name='chevron-right' size={20} color={Colors.mediumGray} />
+            <Icon name={language === 'ar' ? 'chevron-left' : 'chevron-right'} size={20} color={Colors.mediumGray} />
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.filterItem}>
-          <Text style={styles.filterLabel}>Location</Text>
-          <View style={GlobalStyles.row}>
-            <Text style={styles.filterValue}>All of Lebanon</Text>
-            <Icon name='chevron-right' size={20} color={Colors.mediumGray} />
+        <TouchableOpacity style={[styles.filterItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+          <Text style={styles.filterLabel}>{t('location')}</Text>
+          <View style={[GlobalStyles.row, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+            <Text style={styles.filterValue}>{t('allLebanon')}</Text>
+            <Icon name={language === 'ar' ? 'chevron-left' : 'chevron-right'} size={20} color={Colors.mediumGray} />
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Price (USD)</Text>
-        <View style={styles.priceInputContainer}>
+        <Text style={[styles.sectionTitle, { textAlign: language === 'ar' ? 'right' : 'left' }]}>
+          {t('priceUnits')}
+        </Text>
+        <View style={[styles.priceInputContainer, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
           <TextInput 
-            placeholder='Min' 
+            placeholder={language === 'ar' ? 'الأقل' : 'Min'} 
             placeholderTextColor={Colors.mediumGray}
-            style={styles.priceInput}
+            style={[styles.priceInput, { textAlign: language === 'ar' ? 'right' : 'left' }]}
             keyboardType='numeric'
           />
           <TextInput 
-            placeholder='Max' 
+            placeholder={language === 'ar' ? 'الأعلى' : 'Max'} 
             placeholderTextColor={Colors.mediumGray}
-            style={styles.priceInput}
+            style={[styles.priceInput, { textAlign: language === 'ar' ? 'right' : 'left' }]}
             keyboardType='numeric'
           />
         </View>
@@ -80,13 +86,15 @@ const FilterScreen = () => {
           </View>
         ) : dynamicFields.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Details</Text>
+            <Text style={[styles.sectionTitle, { textAlign: language === 'ar' ? 'right' : 'left' }]}>
+              {t('details')}
+            </Text>
             {dynamicFields.map((field) => (
-              <TouchableOpacity key={field.id} style={styles.filterItem}>
+              <TouchableOpacity key={field.id} style={[styles.filterItem, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
                 <Text style={styles.filterLabel}>{field.label}</Text>
-                <View style={GlobalStyles.row}>
-                  <Text style={styles.filterValue}>Any</Text>
-                  <Icon name='chevron-right' size={20} color={Colors.mediumGray} />
+                <View style={[GlobalStyles.row, { flexDirection: language === 'ar' ? 'row-reverse' : 'row' }]}>
+                  <Text style={styles.filterValue}>{language === 'ar' ? 'الكل' : 'Any'}</Text>
+                  <Icon name={language === 'ar' ? 'chevron-left' : 'chevron-right'} size={20} color={Colors.mediumGray} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -96,7 +104,7 @@ const FilterScreen = () => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.applyButton}>
-          <Text style={styles.applyButtonText}>Apply Filters</Text>
+          <Text style={styles.applyButtonText}>{t('apply')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
